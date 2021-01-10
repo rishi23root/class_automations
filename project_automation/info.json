@@ -1,20 +1,23 @@
 {
-    "file_name":"Lab execise-1",
+    "file_name":"Lab exercises 2",
+    "directory": "E:\\class-c\\lab-file\\2",    
+    "format":{
+        "heading":true,
+        "data": {"question":true,"solution":true,"picture":true},
+        "end_name":true
+        },
+    "userinfo":{
+        "username":"Rishabh Jain",
+        "ROLL NO":"20SCSE1010642"
+    },
     "data":{
         "questions":[
-        "1.Write a program to display “hello world” in C.",
-        "2.Write a program to add two numbers (5&7) and display its sum.",
-        "3.Write a program to multiply two numbers (10&8) and display its product.",
-        "4.Write a program to calculate area of a circle having its radius (r=5).",
-        "5.Write a program to calculate area of an ellipse having its axes (minor=4cm, major=6cm).",
-        "6.Write a program to calculate simple interest for a given P=4000, T=2, R=5.5. (I = P*T*R/100)"],
+        	"1. Write a program to produce the output",
+        	"2. Given x=3.0, y=12.5, z= 523.3, A=300.0, B=1200.5, C=5300.3, Write a program to display the following: "
+			],
         "files":[
-            ["code_file.c","ss.png"],
-            ["file.c","ab.png"],
-            ["file.c","a.png"],
-            ["file.c","ab.png"],
-            ["file.c","a.png"],
-            ["file.c","ab.png"]
+            ["a.c","a.PNG"],
+            ["b.c","b.PNG"]
         ]
     }
 
