@@ -7,17 +7,24 @@
         "end_name":true
         },
     "userinfo":{
-        "username":"Rishabh Jain",
-        "ROLL NO":"20SCSE1010642"
+        "Student":"Rishabh Jain",
+        "Roll No":"20SCSE1010642"
     },
     "data":{
         "questions":[
         	"1. Write a program to produce the output",
-        	"2. Given x=3.0, y=12.5, z= 523.3, A=300.0, B=1200.5, C=5300.3, Write a program to display the following: "
+        	"2. Given x=3.0, y=12.5, z= 523.3, A=300.0, B=1200.5, C=5300.3, Write a program to display the following: ",
+        	"3. Given x=3.0, y=12.5, z= 523.3, A=300.0, B=1200.5, C=5300.3, Write a program to display the following: ",
+        	"4. Given x=3.0, y=12.5, z= 523.3, A=300.0, B=1200.5, C=5300.3, Write a program to display the following: ",
+        	"5. Given x=3.0, y=12.5, z= 523.3, A=300.0, B=1200.5, C=5300.3, Write a program to display the following: "
 			],
         "files":[
             ["a.c","a.PNG"],
-            ["b.c","b.PNG"]
+            ["b.c","b.PNG"],
+            ["c.c","c.PNG"],
+            ["d.c","d.PNG"],
+            ["e.c","e.PNG"]
+
         ]
     }
 
