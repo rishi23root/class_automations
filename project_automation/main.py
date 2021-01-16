@@ -4,9 +4,14 @@ from docx.shared import Inches,Pt,RGBColor
 from PIL import Image
 import json
 import os
+import math
 
 
 class project_creator:
+    max_img_width = 700
+    page_max_lines = 38
+    image_height_by_line = 25.4   # eg -> h =178 in 7 lines so and ratio is some where around 25.4
+
     def __init__(self,info_file):
         # file name saved 
         self.info_file = info_file
@@ -34,15 +39,24 @@ class project_creator:
     def extract_info(self):
         # data file and read data and update class
         with open(self.info_file,'r',encoding="utf8") as info_file:
-            info = json.load(info_file)
-            self.file_name = info["file_name"]
-            self.directory = os.path.normpath(info["directory"])
-            self.userinfo = info["userinfo"]
-            self.questions = info["data"]["questions"]
-            self.files = info["data"]["files"]
-            self.isHeading = info["format"]["heading"]
-            self.block = info["format"]["data"]
-            self.isEnd_name = info["format"]["end_name"]
+            try:
+                info = json.load(info_file)
+                self.file_name = info["file_name"]
+                self.userinfo = info["userinfo"]
+                self.questions = info["data"]["questions"]
+                self.files = info["data"]["files"]
+                self.isHeading = info["format"]["heading"]
+                self.block = info["format"]["data"]
+                self.isEnd_name = info["format"]["end_name"]            
+            except :
+                raise Exception(f' Unable to read data from json File -> {self.info_file}  -try fixing some format.')
+            else:
+                # for the directory for code should be present
+                directory = os.path.normpath(info["directory"])
+                if os.path.isdir(directory):
+                    self.directory = directory 
+                else :
+                    raise Exception('Directory not found') 
            
     def file_reader(self,file_name):
         print(f'reading file => {file_name} 🕵️‍')
@@ -82,13 +96,14 @@ class project_creator:
         
         # image width and height of image
         w,h = Image.open(image).size
-        self.page_lines += round(h/30)
 
         # big - 1920 1080  # idle - 700 _
-        if w < 700:
+        if w < self.max_img_width:
             self.document.add_picture(image)
         else:
             self.document.add_picture(image,width=Inches(7.5))
+        
+        self.page_lines += round(h/self.image_height_by_line)
 
     def data_block(self,question,code_data,ss):
         # write questions as heading in bold
@@ -99,51 +114,67 @@ class project_creator:
         if self.block["solution"] :
             self.code(code_data)  # print(code_data)
             self.page_lines += len(code_data.split('\n'))+1
-
+           
         if self.block["picture"] : 
             self.image(ss)   # print(ss)
             # self.page_lines
+        
+        # if page completed
+            if self.page_lines > self.page_max_lines : self.page_lines -= self.page_max_lines 
 
     def create_file(self):
         # write file name at top in center
         if self.isHeading:
             heading = self.document.add_heading(self.file_name, 0)  # print(self.file_name)
             heading.alignment = 1
+       
         self.page_lines = 3 
         for question,files in zip(self.questions,self.files):
             # question  # code = self.file_reader(files[0]) # ss = files[1]
             self.data_block(question,self.file_reader(files[0]),files[1])
 
             # add page break for every new question
-            print(self.page_lines)
-            if self.page_lines >= 28  and question != self.questions[-1]:
+            if self.page_lines > self.page_max_lines : self.page_lines -= self.page_max_lines 
+            one_page = self.page_lines/self.page_max_lines
+            one_page_remaing_space = math.ceil(one_page) - one_page
+            print(self.page_lines,one_page_remaing_space)
+
+            if one_page_remaing_space < 0.1 and question != self.questions[-1]:
+                # if 28 <= self.page_lines >= 35  and question != self.questions[-1]:
                 self.document.add_page_break()
             
-            self.page_lines = 0
+            # self.page_lines = 0
 
         if self.isEnd_name:
             # add name of the student in the end the file 
             hr = self.document.add_paragraph("_____________________________________________________________________")
             hr.alignment = 1
-            para = f'''Student : {self.userinfo["username"]}\nRoll No : {self.userinfo["ROLL NO"]}'''
+            para = ''
+            for key,value in zip(self.userinfo.keys(),self.userinfo.values()):
+                para += f'{key} : {value}\n' 
+            else:
+                para = para[:-1]
             end_userinfo = self.document.add_paragraph(para)
             font = end_userinfo.style.font
             font.color.rgb = RGBColor(0,0,0)
 
+    def walk_in_dir(self):
+        print(self.directory)
+        os.chdir(self.directory)
+        print(f"Dir changed to {self.directory}")
 
     @staticmethod
     def open_file(file_name):
-        # to open the fiel for results 
+        # to open the file for results 
         print("opening file for checking ...")
         os.startfile(file_name+'.docx')
 
     @classmethod
     def runner(cls,info_file):
-        with cls(info_file) as clas :
-            # chnge dir to the directory
-            os.chdir(clas.directory)
-            print(f"Dir changed to {clas.directory}")
-
+        with cls(info_file) as clas:
+            # change dir to the directory for reading and saving the data
+            clas.walk_in_dir()
+            
             # this will create file and save all the changes
             clas.create_file()
             file_name = clas.file_name
