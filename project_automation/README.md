@@ -16,6 +16,6 @@ steps to using this program after cloning repo
   
   -i --infofile INFOFILE  json data file info-file default (info.json).
 
-### This repo will very use full with the combination of other tools in the repo 
+### This repo will very useful itself and with the combination of other tools in the repo 👌👌  
 
 even i use this tool the most, for my project submission.
