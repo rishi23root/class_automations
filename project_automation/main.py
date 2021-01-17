@@ -1,4 +1,3 @@
-# python main.py
 from docx import Document # pip install python-docx   
 from docx.shared import Inches,Pt,RGBColor
 from PIL import Image
@@ -6,11 +5,11 @@ import json
 import os
 import math
 
-
 class project_creator:
     max_img_width = 700
-    page_max_lines = 38
-    image_height_by_line = 25.4   # eg -> h =178 in 7 lines so and ratio is some where around 25.4
+    page_max_lines = 29 # 28
+    image_height_by_line = 25.4  # eg -> h =178 in 7 lines so and ratio is some where around 25.4
+    next_page_threshold = 0.125
 
     def __init__(self,info_file):
         # file name saved 
@@ -103,52 +102,61 @@ class project_creator:
         else:
             self.document.add_picture(image,width=Inches(7.5))
         
-        self.page_lines += round(h/self.image_height_by_line)
+        aprox_lines = round(h/self.image_height_by_line)
+        # self.page_lines += aprox_lines + 1 
+        self.page_lines += aprox_lines + 1 if aprox_lines > 1.5 else aprox_lines + 1.5
 
     def data_block(self,question,code_data,ss):
         # write questions as heading in bold
         if self.block["question"] :
             self.question(question) # print(question)
-            self.page_lines += 2
+            self.page_lines += math.ceil(len(question)/62)*1.5 #62 is len of words in one lines
 
         if self.block["solution"] :
             self.code(code_data)  # print(code_data)
-            self.page_lines += len(code_data.split('\n'))+1
+            self.page_lines += len(code_data.split('\n')) + 1
            
         if self.block["picture"] : 
             self.image(ss)   # print(ss)
             # self.page_lines
-        
-        # if page completed
-            if self.page_lines > self.page_max_lines : self.page_lines -= self.page_max_lines 
-
+             
     def create_file(self):
+        self.page_lines = 0
         # write file name at top in center
         if self.isHeading:
             heading = self.document.add_heading(self.file_name, 0)  # print(self.file_name)
             heading.alignment = 1
-       
-        self.page_lines = 3 
+            self.page_lines = 1.25
+
         for question,files in zip(self.questions,self.files):
             # question  # code = self.file_reader(files[0]) # ss = files[1]
             self.data_block(question,self.file_reader(files[0]),files[1])
 
-            # add page break for every new question
-            if self.page_lines > self.page_max_lines : self.page_lines -= self.page_max_lines 
-            one_page = self.page_lines/self.page_max_lines
-            one_page_remaing_space = math.ceil(one_page) - one_page
-            print(self.page_lines,one_page_remaing_space)
+            # if page completed
+            if self.page_lines > self.page_max_lines :
+                pages = math.ceil(self.page_lines/self.page_max_lines) -1
+                print(pages)
+                if pages == 0 : pages = 1
+                self.page_lines -= self.page_max_lines*pages
 
-            if one_page_remaing_space < 0.1 and question != self.questions[-1]:
-                # if 28 <= self.page_lines >= 35  and question != self.questions[-1]:
+            # add page break for every new question
+            current_page_possition = self.page_lines/self.page_max_lines
+            remaing_space_on_page = 1 - current_page_possition
+
+            # for testing # 
+            print(self.page_lines,current_page_possition,remaing_space_on_page)
+
+            if remaing_space_on_page < self.next_page_threshold  and question != self.questions[-1]:
+                print('next page')
                 self.document.add_page_break()
-            
-            # self.page_lines = 0
+                self.page_lines = 0
 
         if self.isEnd_name:
             # add name of the student in the end the file 
-            hr = self.document.add_paragraph("_____________________________________________________________________")
+            hr = self.document.add_paragraph("")
+            hr.add_run("_____________________________________________________________________").bold = True
             hr.alignment = 1
+
             para = ''
             for key,value in zip(self.userinfo.keys(),self.userinfo.values()):
                 para += f'{key} : {value}\n' 
