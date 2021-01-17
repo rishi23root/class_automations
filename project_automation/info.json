@@ -1,6 +1,6 @@
 {
     "file_name":"File Name",
-    "directory": "absolute path for the director with files",    
+    "directory": "absolute path for the director with files ex - E:\\class-c\\lab-file\\3",    
     "format":{
         "heading":true,
         "data": {"question":true,"solution":true,"picture":true},
