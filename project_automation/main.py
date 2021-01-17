@@ -4,16 +4,14 @@ from PIL import Image
 import json
 import os
 import math
+import argparse
 
 class project_creator:
     max_img_width = 700
-    page_max_lines = 29 # 28
-    image_height_by_line = 25.4  # eg -> h =178 in 7 lines so and ratio is some where around 25.4
-    next_page_threshold = 0.125
-
-    def __init__(self,info_file):
+    def __init__(self,info_file,new_page_new_question = False):
         # file name saved 
         self.info_file = info_file
+        self.new_page_new_question = new_page_new_question 
 
     def __enter__(self):
         self.extract_info()
@@ -102,66 +100,40 @@ class project_creator:
         else:
             self.document.add_picture(image,width=Inches(7.5))
         
-        aprox_lines = round(h/self.image_height_by_line)
-        # self.page_lines += aprox_lines + 1 
-        self.page_lines += aprox_lines + 1 if aprox_lines > 1.5 else aprox_lines + 1.5
-
     def data_block(self,question,code_data,ss):
         # write questions as heading in bold
         if self.block["question"] :
             self.question(question) # print(question)
-            self.page_lines += math.ceil(len(question)/62)*1.5 #62 is len of words in one lines
 
         if self.block["solution"] :
             self.code(code_data)  # print(code_data)
-            self.page_lines += len(code_data.split('\n')) + 1
            
         if self.block["picture"] : 
             self.image(ss)   # print(ss)
-            # self.page_lines
              
     def create_file(self):
-        self.page_lines = 0
         # write file name at top in center
         if self.isHeading:
             heading = self.document.add_heading(self.file_name, 0)  # print(self.file_name)
             heading.alignment = 1
-            self.page_lines = 1.25
 
         for question,files in zip(self.questions,self.files):
             # question  # code = self.file_reader(files[0]) # ss = files[1]
             self.data_block(question,self.file_reader(files[0]),files[1])
 
-            # if page completed
-            if self.page_lines > self.page_max_lines :
-                pages = math.ceil(self.page_lines/self.page_max_lines) -1
-                print(pages)
-                if pages == 0 : pages = 1
-                self.page_lines -= self.page_max_lines*pages
-
-            # add page break for every new question
-            current_page_possition = self.page_lines/self.page_max_lines
-            remaing_space_on_page = 1 - current_page_possition
-
-            # for testing # 
-            print(self.page_lines,current_page_possition,remaing_space_on_page)
-
-            if remaing_space_on_page < self.next_page_threshold  and question != self.questions[-1]:
-                print('next page')
+            if self.new_page_new_question and question != self.questions[-1]:
                 self.document.add_page_break()
-                self.page_lines = 0
 
         if self.isEnd_name:
             # add name of the student in the end the file 
             hr = self.document.add_paragraph("")
             hr.add_run("_____________________________________________________________________").bold = True
             hr.alignment = 1
-
             para = ''
             for key,value in zip(self.userinfo.keys(),self.userinfo.values()):
                 para += f'{key} : {value}\n' 
-            else:
-                para = para[:-1]
+            else : para = para[:-1]
+
             end_userinfo = self.document.add_paragraph(para)
             font = end_userinfo.style.font
             font.color.rgb = RGBColor(0,0,0)
@@ -178,8 +150,8 @@ class project_creator:
         os.startfile(file_name+'.docx')
 
     @classmethod
-    def runner(cls,info_file):
-        with cls(info_file) as clas:
+    def runner(cls,info_file,new_page_new_question = False):
+        with cls(info_file,new_page_new_question) as clas:
             # change dir to the directory for reading and saving the data
             clas.walk_in_dir()
             
@@ -190,6 +162,11 @@ class project_creator:
         # to open the after it saved
         cls.open_file(file_name)
 
-
 if __name__ == "__main__":
-    project_creator.runner("info.json")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n','--newPage',action="store_true",help = "for get every new question on new page.")
+    parser.add_argument('-i','--infofile', default = 'info.json', help = "json data file info-file default (info.json).")
+    
+    args = parser.parse_args()
+    
+    project_creator.runner(args.infofile,new_page_new_question = args.newPage)
