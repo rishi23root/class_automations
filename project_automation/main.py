@@ -117,6 +117,9 @@ class project_creator:
             heading = self.document.add_heading(self.file_name, 0)  # print(self.file_name)
             heading.alignment = 1
 
+        if len(self.questions) != len(self.files):
+            raise Exception("question should have files to use and files should have questions check the info file for corrections  ")
+
         for question,files in zip(self.questions,self.files):
             # question  # code = self.file_reader(files[0]) # ss = files[1]
             self.data_block(question,self.file_reader(files[0]),files[1])
