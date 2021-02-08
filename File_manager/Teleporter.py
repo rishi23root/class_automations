@@ -1,5 +1,6 @@
 import datetime
 import os,time,uuid,shutil 
+from shutil import copy2
 
 class Teleporter:
     '''to move the files and folders around'''
@@ -52,12 +53,12 @@ class Teleporter:
             # first check if already exist 
             if os.path.exists(_to):
                 _to = self.absolute_path(self.destination,self.name_with_suffix(rename = True))
-                shutil.move(_from,_to)
+                shutil.move(_from,_to,copy_function=copy2)
                 new_file_name = _to.rsplit('\\',1)[1]
                 print(f"{self.file_name} -> File Moved successfully as {new_file_name} .")
                 self.renamed_name = new_file_name
             else:
-                shutil.move(_from,_to)
+                shutil.move(_from,_to,copy_function=copy2)
                 print(f"{self.file_name} -> File Moved successfully.") 
                 self.renamed_name = self.file_name
         except PermissionError : raise Exception("Permission denied.") 
@@ -71,12 +72,12 @@ class Teleporter:
 
             if os.path.exists(_to):
                 _to = self.absolute_path(self.destination,self.name_with_suffix(True))
-                shutil.move(_from,_to)
+                shutil.move(_from,_to,copy_function=copy2)
                 new_file_name = _to.rsplit('\\',1)[1]
                 print(f"{self.directory_name} Directory moved sucessfully as {new_file_name}.")          
                 self.directory_name = new_file_name
             else :
-                shutil.move(_from,_to)
+                shutil.move(_from,_to,copy_function=copy2)
                 print(f"{self.directory_name} Directory moved sucessfully .")
         except PermissionError : raise Exception("Permission denied.") 
         except Exception as e : raise Exception(e)
@@ -90,7 +91,7 @@ class Teleporter:
                 absolute_file_path = self.absolute_path(_to,file_name)
                 mtime = str(datetime.datetime.fromtimestamp(os.stat(absolute_file_path).st_ctime)).split(' ')[1].split('.')[0].replace(':','_') 
                 new_file_name = name  + '-'  +  mtime[:5]  + '.' + extention
-                shutil.move(absolute_file_path,self.absolute_path(_to,new_file_name))
+                shutil.move(absolute_file_path,self.absolute_path(_to,new_file_name),copy_function=copy2)
                 print(file_name)
 
     @classmethod
@@ -109,15 +110,15 @@ class Teleporter:
 
 if __name__ == "__main__":
     # testiing data
-    source      = 'D:\\class_automations\\watch'
-    destination = os.path.join('D:\\class_automations\\watch',"a")
+    source      = 'D:\\class_automations\\File_manager'
+    destination = os.path.join('D:\\class_automations\\File_manager',"a")
     _name = "b" # file or directory name
 
     # making directory for testing
     if not os.path.exists(destination) : 
         os.mkdir(destination)
-    if not os.path.exists(os.path.join('D:\\class_automations\\watch',"b")):
-        os.mkdir(os.path.join('D:\\class_automations\\watch',"b"))
+    if not os.path.exists(os.path.join('D:\\class_automations\\File_manager',"b")):
+        os.mkdir(os.path.join('D:\\class_automations\\File_manager',"b"))
 
     # Teleporter.File(source,destination,_name)
     Teleporter.Directory(source,destination,_name,rename = False)
