@@ -124,7 +124,7 @@ def Listener(path_list,database_name):
         # Add observable to list of observer_list
         observer_list.append(observer)
     else :
-        print("all given paths are active for listening...")
+        print("all given paths are active for listening...  PRESS (ctrl + c ) to stop")
         observer.start()
         # for ob in observer_list : ob.start()
 
@@ -134,7 +134,7 @@ def Listener(path_list,database_name):
     except KeyboardInterrupt:
         # close the database and save changes
         event_handler.close()
-        print('stoping the process')
+        print('stoping the process PRESS-> (ctrl + c ) to stop')
         # for different methods of closing functions don't use keyboardInterrupt. 
         # stop observer if interrupted
         observer.unschedule_all()
