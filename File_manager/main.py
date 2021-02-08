@@ -164,8 +164,8 @@ class supervisor:
                 os.mkdir(destination)
             
             try : 
-                class_name = input("\n\nEnter the name of the class to save data it :") + '-' + each_class_time 
-            except : 
+                class_name = input("\n\nEnter the name of the class to save data :") + '-' + each_class_time 
+            except KeyboardInterrupt: 
                 class_name = 'undefine-' + each_class_time[:2] + '-' + each_class_time 
 
             destination = os.path.join(destination,class_name)
@@ -185,6 +185,8 @@ class supervisor:
                     Teleporter.File(source,destination,file_name)   
         else :
             print("Nothing to work on..")
+
+        print("\n\t\tProgram ended...")
 
 now = datetime.datetime.now()
 today = now.strftime("%d-%m-%Y-%a")
