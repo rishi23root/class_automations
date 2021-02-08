@@ -24,5 +24,11 @@ YOU can changer the listening folder in `info.json` all the path should be absol
 # steps to using this program after cloning repo
   - cd File_manager
   - run the python program like this `python main.py` 
-
 Then give the asked values and thats it.
+
+## alert
+videos files may take some time to download,
+
+if not download completely program raise error of permission denied.
+
+so make sure all the files are sucessfull downloaded and saved.
