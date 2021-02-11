@@ -121,8 +121,8 @@ class pdf:
         directory ,file_name= path_to_pdf.rsplit('\\',1)
         print(directory)
 
-        pdf_file = fitz.open(file_name)
         pdf = cls(directory)
+        pdf_file = fitz.open(file_name)
 
         pdf.imagelist = []
         for page_index in range(len(pdf_file)):
