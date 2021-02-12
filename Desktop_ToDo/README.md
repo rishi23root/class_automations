@@ -19,3 +19,8 @@ YOU can update `ToDo.json`
         "pdf _compresser final commit"
     ]
 ```
+
+# steps to using this program after cloning repo
+  - cd Desktop_ToDo
+  - update the `ToDo.json` file 
+  - run the python program like this `python main.py` 
