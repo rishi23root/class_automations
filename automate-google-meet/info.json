@@ -1,0 +1,17 @@
+{
+    "classes":[
+        {    
+            "code":"rvz-xypz-buu",
+            "join_time":"20:40",
+            "end_time":"21:40",
+            "day":"monday"
+        },
+        {    
+            "code":"rvz-xypz-buu",  
+            "join_time":"00:55",
+            "end_time":"00:56",
+            "day":"wednesday"
+        }
+    ]
+}
+
