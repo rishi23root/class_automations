@@ -1,0 +1,13 @@
+thsi is hf
+## Typer
+A tool which can TYPE very fast it is for the Mimik human typing
+
+## Steps>
+1. complete requirements by `pip install -r requirements`
+2. save or update the data in the `data.txt` or create new file add pass in the call
+3. run the program `python3 main.py -h` for help
+4. run the program `python3 main.py` to execute
+
+
+## Any issues
+Repost in the Issues section 
