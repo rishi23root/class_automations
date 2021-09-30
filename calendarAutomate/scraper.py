@@ -18,12 +18,12 @@ class TimeTable():
         options.headless = True
 
         print("setup drivers", end='')
-        try :
+        try:
             self.driver = webdriver.Chrome(
                 executable_path='./chromedriver.exe',
                 options=options)
-        except :
-            print("Error in chromedriver.exe path")
+        except Exception as e:
+            raise Exception("Error in chromedriver.exe path",e)
         print(" ..successful")
         self.logedin = False
 
@@ -59,21 +59,21 @@ class TimeTable():
         button_xpath = '//*[@id="psslogin"]'
         login = self.driver.find_element_by_xpath(button_xpath)
         self.execute_when_element_on_screen(self.driver, button_xpath)
-        nap(0.5) # if having error in bg to load 
+        nap(0.5)  # if having error in bg to load
         login.click()
         self.logedin = True
 
     def getTimeTable(self):
         turl = "https://gu.icloudems.com/corecampus/student/schedulerand/tt_report_view.php"
-        print("opening -",turl)
+        print("opening -", turl)
         self.driver.get(turl)
         cookies = self.driver.get_cookies()
         return self.getTimeTableJSON(cookies)
 
     def getTimeTableJSON(self, cookies={}):
-        return self.getTimeTableByRequest(cookies) # success -  2/7        
+        return self.getTimeTableByRequest(cookies)  # success -  2/7
 
-    def getTimeTableByRequest(self,cookies={}):
+    def getTimeTableByRequest(self, cookies={}):
         tturl = 'https://gu.icloudems.com/corecampus/student/schedulerand/ctrl_tt_report.php'
         startDate = D.today()
         endDate = startDate + 6*days
@@ -174,15 +174,8 @@ class TimeTable():
 
     @staticmethod
     def getData(*args, **kargs):
-        for i in range(5):
-            try:
-                jsondata = TimeTable.runner(*args, **kargs)
-                return TimeTable.NormalizeData(jsonData=jsondata)
-            except Exception as e:
-                print(f"Try {i+1}/5 failed." ,e)
-                continue 
-        else :
-            raise Exception("Unable to extract Data 🙄")
+        jsondata = TimeTable.runner(*args, **kargs)
+        return TimeTable.NormalizeData(jsonData=jsondata)
 
 
 # for testing
@@ -193,7 +186,7 @@ if __name__ == "__main__":
     print(TimeTable.runner(
         '<your usernaem here>',
         '<your password here>'
-        )
+    )
     )
     # TimeTable.getData(
     #      '<your usernaem here>',
